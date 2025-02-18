@@ -1,0 +1,7 @@
+train: train/images
+val: valid/images
+test: test/images
+path: cornerx_detection
+
+nc: 1
+names: ['xcorner']
