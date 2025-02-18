@@ -118,18 +118,6 @@ final_project/
 
 ```
 
-## 📌 Example Output
-
-### Detected Chessboard
-![Detected Chessboard](https://via.placeholder.com/300x200?text=Detected+Chessboard)
-
-### Stockfish Best Move
-![Stockfish Best Move](https://via.placeholder.com/300x200?text=Stockfish+Best+Move)
-
-### Visualized Board with Best Move
-![Visualized Board with Best Move](https://via.placeholder.com/300x200?text=Visualized+Board)
-
-
 ## 🔗 Resources
 - [Stockfish's website](https://stockfishchess.org/)
 - [Stockfish 15 Chess Engine download link](https://drive.google.com/drive/folders/1ASj7nGkFlZB-RLZxcmYa47sq4moN4aAb)
