@@ -1,29 +1,11 @@
 task: detect
 mode: train
 model: yolo11n.pt
-data:
-  path: ../datasets/roboflow
-  train: chess_data/train
-  val: chess_data/valid
-  test: chess_data/test
-  names:
-    0: bishop
-    1: black-bishop
-    2: black-king
-    3: black-knight
-    4: black-pawn
-    5: black-queen
-    6: black-rook
-    7: white-bishop
-    8: white-king
-    9: white-knight
-    10: white-pawn
-    11: white-queen
-    12: white-rook
+data: board_config.yml
 epochs: 10
 time: null
 patience: 100
-batch: 16
+batch: 20
 imgsz: 480
 save: true
 save_period: -1

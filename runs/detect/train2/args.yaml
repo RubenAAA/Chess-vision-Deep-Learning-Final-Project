@@ -1,11 +1,11 @@
 task: detect
 mode: train
 model: yolo11n.pt
-data: updated_config.yml
+data: board_config.yml
 epochs: 10
 time: null
 patience: 100
-batch: 16
+batch: 60
 imgsz: 480
 save: true
 save_period: -1
