@@ -121,13 +121,13 @@ final_project/
 ## 📌 Example Output
 
 ### Detected Chessboard
-![Detected Chessboard](https://images.unsplash.com/photo-1607602735342-2c9d200abf88?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8Y2hlc3N8ZW58MHwwfDB8fA%3D%3D&ixlib=rb-4.0.3)
+![Detected Chessboard](https://via.placeholder.com/300x200?text=Detected+Chessboard)
 
 ### Stockfish Best Move
-![Stockfish Best Move](https://images.unsplash.com/photo-1619753665368-320ad8f2ac00?ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8Y2hlc3MlMjBjb21wdXRlcnxlbnwwfDB8MHx8&ixlib=rb-4.0.3)
+![Stockfish Best Move](https://via.placeholder.com/300x200?text=Stockfish+Best+Move)
 
 ### Visualized Board with Best Move
-![Visualized Board with Best Move](https://images.unsplash.com/photo-1561812931-7521779f87e3?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mzd8fGNoZXNzfGVufDB8MHwwfHw%3D&ixlib=rb-4.0.3)
+![Visualized Board with Best Move](https://via.placeholder.com/300x200?text=Visualized+Board)
 
 
 ## 🔗 Resources
