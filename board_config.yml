@@ -1,7 +1,7 @@
-train: train/images
-val: valid/images
-test: test/images
-path: cornerx_detection
+path: /root/Chess-vision-Deep-Learning-Final-Project-master/datasets/cornerx_detection
+train: /root/Chess-vision-Deep-Learning-Final-Project-master/datasets/cornerx_detection/train/images
+val: /root/Chess-vision-Deep-Learning-Final-Project-master/datasets/cornerx_detection/valid/images
+test: /root/Chess-vision-Deep-Learning-Final-Project-master/datasets/cornerx_detection/test/images
 
 nc: 1
 names: ['xcorner']

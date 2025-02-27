@@ -1,18 +1,24 @@
-names:
-  0: bishop
-  1: black-bishop
-  2: black-king
-  3: black-knight
-  4: black-pawn
-  5: black-queen
-  6: black-rook
-  7: white-bishop
-  8: white-king
-  9: white-knight
-  10: white-pawn
-  11: white-queen
-  12: white-rook
-path: pieces_detection
-test: test
-train: train
+nc: 12
+names: ['black-bishop',
+ 'black-king', 
+ 'black-knight', 
+ 'black-pawn', 
+ 'black-queen', 
+ 'black-rook', 
+ 'white-bishop', 
+ 'white-king', 
+ 'white-knight', 
+ 'white-pawn', 
+ 'white-queen', 
+ 'white-rook']
+path: /root/Chess-vision-Deep-Learning-Final-Project-master/datasets/pieces_detection
+train: /root/Chess-vision-Deep-Learning-Final-Project-master/datasets/pieces_detection/train/images
+val: /root/Chess-vision-Deep-Learning-Final-Project-master/datasets/pieces_detection/valid/images
+test: /root/Chess-vision-Deep-Learning-Final-Project-master/datasets/pieces_detection/test/images
 val: valid
+
+
+
+
+
+

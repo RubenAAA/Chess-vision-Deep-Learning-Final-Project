@@ -21,9 +21,9 @@ def train_board_detection():
 
     # Step 2: Train the model using the specified dataset and parameters
     model_board.train(
-        data="board_config.yml",  # Path to dataset configuration file
-        epochs=10,                # Number of training epochs
-        batch=30,                 # Batch size
+        data="./board_config.yml",  # Path to dataset configuration file
+        epochs=50,                # Number of training epochs
+        batch=60,                 # Batch size
         imgsz=480,                # Image resolution
         device=0,                 # Use GPU (device 0)
         pretrained=True,          # Use pretrained weights for transfer learning
@@ -67,9 +67,9 @@ def train_piece_detection():
 
     # Step 2: Train the model using the specified dataset and parameters
     model_pieces.train(
-        data="pieces_config.yml",  # Path to dataset configuration file
-        epochs=10,                # Number of training epochs
-        batch=30,                 # Batch size
+        data="./pieces_config.yml",  # Path to dataset configuration file
+        epochs=50,                # Number of training epochs
+        batch=60,                 # Batch size
         imgsz=480,                # Image resolution
         device=0,                 # Use GPU (device 0)
         pretrained=True,          # Use pretrained weights for transfer learning
@@ -94,7 +94,7 @@ def train_piece_detection():
     print(metrics)
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     print("Starting Training:")
     train_board_detection()
     train_piece_detection()

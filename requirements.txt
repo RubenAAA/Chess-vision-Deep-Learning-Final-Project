@@ -7,3 +7,5 @@ scipy
 python-chess
 pandas
 ipython
+streamlit
+scikit_learn

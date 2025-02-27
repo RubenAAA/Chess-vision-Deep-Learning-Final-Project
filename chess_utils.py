@@ -1,70 +1,80 @@
 import cv2
-import numpy as np
-import pandas as pd
 
+import pandas as pd
+from sklearn.cluster import KMeans
+import numpy as np
+
+from scipy.interpolate import griddata
 
 def complete_grid(crossings, image_shape):
     """
-    Ensures that the detected chessboard intersections form a complete 7x7 grid. 
+    Ensures that the detected chessboard intersections form a complete 7x7 grid.
     If some crossings are missing, they are estimated using interpolation.
 
     Steps:
     1. Sort detected crossings by Y (top to bottom), then by X (left to right).
     2. Attempt to reshape them into a 7x7 grid.
     3. If reshaping fails, apply K-Means clustering to group crossings into 7 rows.
-    4. Within each row, sort points by X-coordinate.
+    4. Within each row, sort points by X-coordinate and ensure exactly 7 per row.
     5. Fill missing values using interpolation from neighboring points.
     """
-
-    # Sort points by Y, then X to structure into rows
-    crossings = sorted(crossings, key=lambda p: (p[1], p[0]))
-
-    # Try reshaping (if we have all points), otherwise estimate missing
-    try:
+    
+    # Convert to numpy array
+    crossings = np.array(crossings)
+    
+    # If all 49 crossings are detected, reshape directly
+    if len(crossings) == 49:
+        crossings = sorted(crossings, key=lambda p: (p[1], p[0]))  # Sort by Y, then X
         grid = np.array(crossings).reshape(7, 7, 2)
-    except ValueError:
-        print(f"Warning: Missing crossings detected. Trying to estimate...")
+        return grid
 
-        # Convert to numpy array
-        crossings = np.array(crossings)
-        
-        # Use k-means clustering to identify 7 rows
-        from sklearn.cluster import KMeans
-        kmeans = KMeans(n_clusters=7, random_state=0, n_init="auto").fit(crossings[:, 1].reshape(-1, 1))
-        row_labels = kmeans.labels_
-        
-        # Sort by row clusters
-        sorted_crossings = []
-        for i in range(7):
-            row_points = crossings[row_labels == i]
-            sorted_crossings.append(sorted(row_points, key=lambda p: p[0]))  # Sort by X in each row
+    print(f"Warning: Detected only {len(crossings)} points. Estimating missing crossings...")
 
-        # Convert to structured grid (handling missing values)
-        grid = np.full((7, 7, 2), np.nan)  # Initialize with NaNs
-        for i, row in enumerate(sorted_crossings):
-            for j, point in enumerate(row):
-                if j < 7:
-                    grid[i, j] = point  # Assign known points
+    # Use K-Means to cluster into 7 row groups (using Y-coordinates)
+    kmeans = KMeans(n_clusters=7, random_state=0, n_init="auto").fit(crossings[:, 1].reshape(-1, 1))
+    row_labels = kmeans.labels_
 
-        # Interpolate missing points (estimate based on neighbors)
-        for i in range(7):
-            for j in range(7):
-                if np.isnan(grid[i, j]).any():
-                    # Estimate missing point as average of neighbors
-                    known_neighbors = []
-                    if i > 0 and not np.isnan(grid[i-1, j]).any():
-                        known_neighbors.append(grid[i-1, j])
-                    if i < 6 and not np.isnan(grid[i+1, j]).any():
-                        known_neighbors.append(grid[i+1, j])
-                    if j > 0 and not np.isnan(grid[i, j-1]).any():
-                        known_neighbors.append(grid[i, j-1])
-                    if j < 6 and not np.isnan(grid[i, j+1]).any():
-                        known_neighbors.append(grid[i, j+1])
-                    
-                    if known_neighbors:
-                        grid[i, j] = np.mean(known_neighbors, axis=0)
+    # Sort by row clusters, then by X within each row
+    sorted_crossings = []
+    for i in range(7):
+        row_points = crossings[row_labels == i]  # Select only points in the row
+        row_points = sorted(row_points, key=lambda p: p[0])  # Sort row by X
+        sorted_crossings.append(row_points)
+
+    # Ensure each row has exactly 7 points (interpolate if necessary)
+    grid = np.full((7, 7, 2), np.nan)  # Initialize grid with NaNs
+    for i, row in enumerate(sorted_crossings):
+        row = np.array(row)
+        if row.shape[0] != 7:
+            x_vals = row[:, 0]
+            y_vals = row[:, 1]
+            x_new = np.linspace(x_vals.min(), x_vals.max(), 7)  # Evenly space missing points
+            y_new = np.interp(x_new, x_vals, y_vals)  # Interpolate Y values for new x's
+            row = np.column_stack((x_new, y_new))  # Reconstruct row as 7 (x,y) pairs
+        grid[i] = row  # Assign row to grid
+
+    # Interpolate any remaining NaNs in the grid using griddata
+    known_points = np.array([
+        (i, j, grid[i, j][0], grid[i, j][1])
+        for i in range(7) for j in range(7)
+        if not np.isnan(grid[i, j]).any()
+    ])
+    missing_points = np.array([
+        (i, j)
+        for i in range(7) for j in range(7)
+        if np.isnan(grid[i, j]).any()
+    ])
+
+    if missing_points.size > 0 and known_points.size > 0:
+        known_coords = known_points[:, :2]
+        known_values = known_points[:, 2:]
+        estimated_values = griddata(known_coords, known_values, missing_points, method='cubic')
+        for (i, j), (x, y) in zip(missing_points, estimated_values):
+            grid[i, j] = [x, y]
 
     return grid
+
+
 
 
 def compute_line_equation(p1, p2, img_shape):
@@ -96,6 +106,8 @@ def compute_line_equation(p1, p2, img_shape):
     y_xmin = int(slope * x_min + intercept)  # Left boundary
     y_xmax = int(slope * x_max + intercept)  # Right boundary
 
+    if slope == 0:
+        slope = 1e-6
     x_ymin = int((y_min - intercept) / slope)  # Top boundary
     x_ymax = int((y_max - intercept) / slope)  # Bottom boundary
 
@@ -332,6 +344,47 @@ def flexible_priority_assignments(square_assignments):
             print(f"Conflict at {square}: {assigned_pieces} → Keeping {chosen}")
 
     return final_assignments
+
+
+def ensure_kings(chessboard):
+    """
+    Ensures there is at least one white and one black king on the board.
+    If a king is missing, it replaces a bishop ('white-bishop' or 'black-bishop') with a king.
+    """
+    # Flatten the board to check for missing kings
+    flat_board = chessboard.flatten().tolist()
+    white_king_missing = "white-king" not in flat_board
+    black_king_missing = "black-king" not in flat_board
+    
+    
+    # If both kings are present, no modification needed
+    if not white_king_missing and not black_king_missing:
+        
+        return chessboard
+
+    for row in range(8):
+        for col in range(8):
+            piece = chessboard[row, col]
+            
+            # Replace a white bishop with a king if the white king is missing
+            if white_king_missing and piece == "white-bishop":
+                chessboard[row, col] = "white-king"
+                print(f"White king was missing. Transformed 'white-bishop' at ({row}, {col}) into 'white-king'.")
+                white_king_missing = False  # Stop replacing
+
+            # Replace a black bishop with a king if the black king is missing
+            elif black_king_missing and piece == "black-bishop":
+                chessboard[row, col] = "black-king"
+                print(f"Black king was missing. Transformed 'black-bishop' at ({row}, {col}) into 'black-king'.")
+                black_king_missing = False  # Stop replacing
+
+            # If both replacements are done, exit early
+            if not white_king_missing and not black_king_missing:
+                break
+
+    
+
+    return chessboard  # Return updated board
 
 
 def reorient_board(board):
