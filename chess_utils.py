@@ -382,8 +382,6 @@ def ensure_kings(chessboard):
             if not white_king_missing and not black_king_missing:
                 break
 
-    
-
     return chessboard  # Return updated board
 
 

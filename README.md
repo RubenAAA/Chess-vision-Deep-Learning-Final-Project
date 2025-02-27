@@ -89,11 +89,10 @@ final_project/
 ├── __pycache__/
 │   └── ... (compiled Python files)
 ├── datasets/
-│   └── ... (dataset files used for training/detection)
-├── cornerx_detection/
-│   └── ... (corner detection logic or scripts)
-├── pieces_detection/
-│   └── ... (chess piece detection logic or scripts)
+│   ├── cornerx_detection/
+│   │ └── ... (corner detection dataset with labels)
+│   └── pieces_detection/
+│     └── ... (chess piece detection dataset with labels)
 ├── results/
 │   └── ... (output results or logs)
 ├── runs/
@@ -105,7 +104,7 @@ final_project/
 │   └── ... (Stockfish engine for Linux)
 ├── stockfish_15_windows/
 │   └── ... (Stockfish engine for Windows)
-├── chessboard.jpg
+├── personal.jpg  (Personal Image used as example)
 ├── chess_vision.ipynb
 ├── yolo11n.pt
 ├── board_config.yml
@@ -113,6 +112,8 @@ final_project/
 ├── models.py
 ├── chess_utils.py
 ├── stockfish_utils.py
+├── streamlit_app.py
+├── packages.txt
 ├── README.md
 └── requirements.txt
 
